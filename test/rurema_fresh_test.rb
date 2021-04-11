@@ -1,13 +1,24 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require 'csv'
 
 class RuremaFreshTest < Minitest::Test
   def test_that_it_has_a_version_number
     refute_nil ::RuremaFresh::VERSION
   end
 
-  def test_it_does_something_useful
-    assert false
+  csv_path = File.expand_path('../testcases.csv', __FILE__)
+  CSV.foreach(csv_path, headers: true).with_index(1) do |row, i|
+    if row['support_version'].nil?
+      puts "#{i}行目のテストケースにサポートしたいバージョンがありません"
+      exit
+    end
+
+    str = "def test_remove#{i}
+            #{'skip' if row['skip']}
+            assert_equal '#{row['target']}', RuremaFresh.remove_old_version('#{row['src']}', '#{row['support_version']}')
+          end"
+    class_eval(str)
   end
 end
