@@ -26,20 +26,26 @@ Command `rurema_fresh` destructively modifies the file.
 so
 
 ```
-$ cat sample.rb
+$ cat sample.rd
+#@samplecode
 #@since 2.4.0
 puts "Hello, World!"
 #@else
 puts "Goodbye, World!"
 #@end
+#@end
 #@until 2.3.0
+#@samplecode
 puts "old"
+#@end
 #@end
 
 $ rurema_fresh sample.rb --ruby==2.4.0
 
-$ cat sample.rb
+$ cat sample.rd
+#@samplecode
 puts "Hello, World!"
+#@end
 ```
 
 ## Development
