@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'optparse'
 require_relative "rurema_fresh/version"
 
 module RuremaFresh
@@ -9,8 +10,18 @@ module RuremaFresh
     blocks = []
     delete_mode = false
     texts = file_text.lines
-    texts.each do |text|
-      if text.start_with?('#@since ') || text.start_with?('#@until ')
+    texts.each_with_index do |text, line_no|
+      if text.start_with?('#@if')
+        puts '#@ifを検知しましたが、サポートしてないので終了します。'
+        exit
+        if text.include?('>') && !text.include?('<')
+          text.gsub!(/\#@if\s*\(\s*version\s*>=\s*(.+)\)/){ '#@since ' + $1 }
+        elsif text.include?('<') && !text.include?('>') && !text.include?('<=')
+          text.gsub!(/\#@if\s*\(\s*version\s*>=\s*(.+)\)/){ '#@until ' + $1 }
+        end
+      end
+
+      if text.start_with?('#@since ', '#@until ')
         blocks << text.dup
         version = text.split[1]
         if version <= support_version
@@ -44,11 +55,29 @@ module RuremaFresh
     texts.join
   end
 
-  def self.main
+  OPTION_EXPLANATIONS = {
+    '--ruby:' => 'Ruby support version; サポートしたいRubyバージョン;'
+  }.freeze
+
+  # --wip
+  def self.options
+    opt = OptionParser.new
+    opt.banner         = 'Usage: rurema_fresh [--ruby]'
+    opt.summary_width  = 14
+    opt.summary_indent = ' ' * 4
+    opt.default_argv   = ARGV
+    # OPTION_EXPLANATIONS.each { |option, explanation| opt.on(option, explanation) }
+    opt.on('-r:', '--ruby', 'Ruby support version; サポートしたいRubyバージョン;')
+    opt.on_tail('-h', '--help', 'show this help') { puts opt.help and exit }
+
+    opt.getopts
+  end
+
+  def self.main(support_version = '2.4.0')
     file_path = ARGV.shift
     buffer = IO.read(file_path)
     puts buffer.lines[0, 4]
-    buffer = remove_old_version(buffer, '2.4.0')
+    buffer = RuremaFresh.remove_old_version(buffer, support_version)
     IO.write(file_path, buffer)
   end
 

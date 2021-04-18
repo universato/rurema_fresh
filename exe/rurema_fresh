@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/rurema_fresh.rb'
+
+puts "Hello, world"
+
+options = RuremaFresh.options
+support_version = options[:ruby] || '2.4.0'
+
+p file_path = ARGV.shift
+buffer = IO.read(file_path)
+puts buffer.lines[0, 4]
+buffer = RuremaFresh.remove_old_version(buffer, support_version)
+IO.write(file_path, buffer)

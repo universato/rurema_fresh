@@ -22,7 +22,25 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Command `rurema_fresh` destructively modifies the file.
+so
+
+```
+$ cat sample.rb
+#@since 2.4.0
+puts "Hello, World!"
+#@else
+puts "Goodbye, World!"
+#@end
+#@until 2.3.0
+puts "old"
+#@end
+
+$ rurema_fresh sample.rb --ruby==2.4.0
+
+$ cat sample.rb
+puts "Hello, World!"
+```
 
 ## Development
 
