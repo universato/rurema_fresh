@@ -44,6 +44,12 @@ module RuremaFresh
         elsif directive == '#@samplecode' && delete_mode
           text.clear
         end
+
+        if (directive, version = blocks.last&.split)
+          if directive == '#@until' && version <= support_version
+            delete_mode = true
+          end
+        end
       elsif text.start_with?('#@samplecode')
         blocks << text.dup
         text.clear if delete_mode
@@ -89,3 +95,20 @@ module RuremaFresh
       directive.sub!('#@_____', '#@until')
     end
 end
+
+if $0 == __FILE__
+  text =  DATA.readlines.join
+  puts RuremaFresh.remove_old_version(text, "2.4.0")
+end
+
+__END__
+#@until 1.9.2
+#@# 残らない1
+#@since 1.9.1
+残らない2
+#@else
+残らない3
+#@end
+残らない4
+#@end
+残る
