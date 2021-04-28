@@ -1,9 +1,8 @@
 # RuremaFresh
 
 RuremaFreshは、るりまの愛称で知られるRubyリファレンスマニュアルのrd形式の文書の整形・サポートを目的としたgemです。
-なお、現在は、「古い条件分岐の削除、可能なら`if`を`since`や`until`に置き換える、メソッド・コマンド」のみを提供しています。
 
-In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/rurema_fresh`. To experiment with that code, run `bin/console` for an interactive prompt.
+なお、現在は、「古い条件分岐の削除、可能なら`if`を`since`や`until`に置き換える、メソッド・コマンド」のみを提供しています。
 
 ## Installation
 
