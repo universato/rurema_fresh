@@ -19,8 +19,6 @@ module RuremaFresh
       version = $3
       if op.include?('<')
         if op.include?('=')
-          # puts "RuremaFresh Alert: if (version <= #{version}) を無理やり書きかえます。"
-          # puts "-> \#@until #{version.succ} に書き換えます。"
           "\#@until #{self.ruby_advance(version)}"
         else
           "\#@until #{version}"
@@ -29,8 +27,6 @@ module RuremaFresh
         if op.include?('=')
           "\#@since #{version}"
         else
-          # puts "RuremaFresh Alert: if (version > #{version})  を無理やり書きかえます。"
-          # puts "-> \#@since #{version.succ} に書き換えます。"
           "\#@since #{self.ruby_advance(version)}"
         end
       elsif op == "=="
@@ -60,9 +56,7 @@ module RuremaFresh
 
       if version1 < support_version
         if op.include?('=')
-          # puts "RuremaFresh Alert: if (version <= #{version}) を無理やり書きかえます。"
-          # puts "-> \#@until #{version.succ} に書き換えます。"
-          "\#@until #{version2.succ}"
+          "\#@until #{self.ruby_advance(version2)}"
         else
           "\#@until #{version2}"
         end
