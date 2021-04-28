@@ -49,7 +49,7 @@ else
     begin
       options = RuremaFresh.options
       if options == {} && ARGV[0]
-        puts "#{ARGV[0]} <- 存在しないサブコマンド"
+        puts "#{ARGV[0]} <- There is no such a subcommand in rurema_fresh
         exit
       end
     rescue OptionParser::MissingArgument => e
