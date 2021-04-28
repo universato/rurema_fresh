@@ -4,8 +4,8 @@ require_relative '../lib/rurema_fresh.rb'
 
 # サブコマンドで条件分岐
 case ARGV[0]
-when "version"
-  # rurema_fresh version ./refm/api/src/_builtin/Array --ruby=2.4.0
+when "versions"
+  # rurema_fresh versions ./refm/api/src/_builtin/Array --ruby=2.4.0
   # puts "rurema_freshコマンドを実行するよ"
   ARGV.shift # => "version"
   options = RuremaFresh.options
@@ -20,7 +20,7 @@ when "version"
       exit
     end
 
-    new_buffer = RuremaFresh.remove_old_version(buffer, support_version)
+    new_buffer = RuremaFresh.remove_old_versions(buffer, support_version)
     IO.write(file_path, new_buffer)
 
     if new_buffer.size == buffer.size
@@ -32,7 +32,7 @@ when "version"
       puts "#{buffer.lines.size - new_buffer.lines.size}行、削除しました。"
     end
   else
-    puts "rurema_fresh version の後ろにファイル名を入れてコマンドを打ってください"
+    puts "rurema_fresh versions の後ろにファイル名を入れてコマンドを打ってください"
     puts "なお、デフォルトの最低サポートバージョンは、#{RuremaFresh::DEFAULT_SUPPORT_VERSION}です。"
     puts "これより古い分岐となるものは、削除されます。"
     puts "サポートしたいバージョンを変更したい場合は、--ruby=2.0.0 のように変更してください。"
@@ -42,12 +42,16 @@ else
   if ARGV.empty?
     puts "rurema_fresh は、version サブコマンドを持ちます。"
     puts "次のように使えます。"
-    puts "rurema_fresh version ./refm/api/src/_builtin/Array --ruby=2.4.0"
+    puts "rurema_fresh versions ./refm/api/src/_builtin/Array --ruby=2.4.0"
     puts "疑問点があったら、ruby-jpのruremaチャンネルやGitHubで聞いてください"
     pp RuremaFresh::HELP_URLS
   else
     begin
       options = RuremaFresh.options
+      if options == {} && ARGV[0]
+        puts "#{ARGV[0]} <- 存在しないサブコマンド"
+        exit
+      end
     rescue OptionParser::MissingArgument => e
       puts e.inspect
       puts "サポートしてないオプションが入力されてました"

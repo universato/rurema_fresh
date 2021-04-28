@@ -7,7 +7,7 @@ require_relative "./rurema_fresh/version.rb"
 module RuremaFresh
   class Error < StandardError; end
 
-  def self.remove_old_version(file_text, support_version = DEFAULT_SUPPORT_VERSION)
+  def self.remove_old_versions(file_text, support_version = DEFAULT_SUPPORT_VERSION)
     support_version = add_minor(support_version)
 
     blocks = []
@@ -114,7 +114,7 @@ module RuremaFresh
     texts.join
   end
   class << self
-    alias version remove_old_version
+    alias versions remove_old_versions
   end
 
   private
@@ -175,7 +175,7 @@ end
 if $0 == __FILE__
   # puts "#{__FILE__}が直接実行されました。"
   # text =  DATA.readlines.join
-  # puts RuremaFresh.remove_old_version(text, "2.4.0")
+  # puts RuremaFresh.remove_old_versions(text, "2.4.0")
 end
 
 __END__

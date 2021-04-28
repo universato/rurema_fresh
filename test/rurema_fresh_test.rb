@@ -20,7 +20,7 @@ class RuremaFreshTest < Minitest::Test
 
     str = "def test_remove#{i}
             #{'skip' if row['skip']}
-            assert_equal '#{row['target']}', RuremaFresh.remove_old_version('#{row['src']}', '#{row['support_version']}')
+            assert_equal '#{row['target']}', RuremaFresh.remove_old_versions('#{row['src']}', '#{row['support_version']}')
           end"
     class_eval(str)
   end
@@ -32,9 +32,9 @@ class RuremaFreshTest < Minitest::Test
 #@end
     TEXT
 
-    assert_equal "残る\n", RuremaFresh.remove_old_version(src, '2.4.0')
-    assert_equal "残る\n", RuremaFresh.remove_old_version(src, '2.4')
-    assert_equal "残る\n", RuremaFresh.remove_old_version(src, 2.4)
+    assert_equal "残る\n", RuremaFresh.remove_old_versions(src, '2.4.0')
+    assert_equal "残る\n", RuremaFresh.remove_old_versions(src, '2.4')
+    assert_equal "残る\n", RuremaFresh.remove_old_versions(src, 2.4)
   end
 
   def test_remove_old_since2
@@ -46,9 +46,9 @@ class RuremaFreshTest < Minitest::Test
 残る
     TEXT
 
-    assert_equal "残る\n" * 3, RuremaFresh.remove_old_version(src, '2.4.0')
-    assert_equal "残る\n" * 3, RuremaFresh.remove_old_version(src, '2.4')
-    assert_equal "残る\n" * 3, RuremaFresh.remove_old_version(src, 2.4)
+    assert_equal "残る\n" * 3, RuremaFresh.remove_old_versions(src, '2.4.0')
+    assert_equal "残る\n" * 3, RuremaFresh.remove_old_versions(src, '2.4')
+    assert_equal "残る\n" * 3, RuremaFresh.remove_old_versions(src, 2.4)
   end
 
   def test_remove_old_until1
@@ -61,9 +61,9 @@ class RuremaFreshTest < Minitest::Test
 残る
     TEXT
 
-    assert_equal "残る\n" * 2, RuremaFresh.remove_old_version(src, '2.4.0')
-    assert_equal "残る\n" * 2, RuremaFresh.remove_old_version(src, '2.4')
-    assert_equal "残る\n" * 2, RuremaFresh.remove_old_version(src, 2.4)
+    assert_equal "残る\n" * 2, RuremaFresh.remove_old_versions(src, '2.4.0')
+    assert_equal "残る\n" * 2, RuremaFresh.remove_old_versions(src, '2.4')
+    assert_equal "残る\n" * 2, RuremaFresh.remove_old_versions(src, 2.4)
   end
 
   def test_remove_old_until2
@@ -72,9 +72,9 @@ class RuremaFreshTest < Minitest::Test
 残らない
 #@end
     TEXT
-    assert_equal "", RuremaFresh.remove_old_version(src, '2.4.0')
-    assert_equal "", RuremaFresh.remove_old_version(src, '2.4')
-    assert_equal "", RuremaFresh.remove_old_version(src, 2.4)
+    assert_equal "", RuremaFresh.remove_old_versions(src, '2.4.0')
+    assert_equal "", RuremaFresh.remove_old_versions(src, '2.4')
+    assert_equal "", RuremaFresh.remove_old_versions(src, 2.4)
   end
 
   def test_remove_old_since_and_else1
@@ -87,7 +87,7 @@ class RuremaFreshTest < Minitest::Test
 #@end
 残る
     TEXT
-    assert_equal "残る\n" * 3, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal "残る\n" * 3, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_old_since_and_else2
@@ -98,7 +98,7 @@ class RuremaFreshTest < Minitest::Test
 残らない
 #@end
     TEXT
-    assert_equal "残る\n", RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal "残る\n", RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_old_until_and_else1
@@ -109,7 +109,7 @@ class RuremaFreshTest < Minitest::Test
 残る
 #@end
     TEXT
-    assert_equal "残る\n", RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal "残る\n", RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_old_until_and_else2
@@ -120,7 +120,7 @@ class RuremaFreshTest < Minitest::Test
 残る
 #@end
     TEXT
-    assert_equal "残る\n", RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal "残る\n", RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_fresh_since
@@ -132,7 +132,7 @@ class RuremaFreshTest < Minitest::Test
 #@end
     TEXT
 
-    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal dst, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_until_since
@@ -144,7 +144,7 @@ class RuremaFreshTest < Minitest::Test
 #@end
     TEXT
 
-    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal dst, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_old_since_in_samplecode1
@@ -163,7 +163,7 @@ class RuremaFreshTest < Minitest::Test
 残る
 #@end
     TEXT
-    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal dst, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_old_until_in_samplecode1
@@ -182,9 +182,9 @@ class RuremaFreshTest < Minitest::Test
 残る
 #@end
     TEXT
-    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
-    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4')
-    assert_equal dst, RuremaFresh.remove_old_version(src, 2.4)
+    assert_equal dst, RuremaFresh.remove_old_versions(src, '2.4.0')
+    assert_equal dst, RuremaFresh.remove_old_versions(src, '2.4')
+    assert_equal dst, RuremaFresh.remove_old_versions(src, 2.4)
   end
 
   def test_remove_old_until_in_samplecode2
@@ -205,7 +205,7 @@ class RuremaFreshTest < Minitest::Test
 残る
 #@end
     TEXT
-    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal dst, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_old_since_with_comment
@@ -216,7 +216,7 @@ class RuremaFreshTest < Minitest::Test
 #@# 残らないコメント
 #@end
     TEXT
-    assert_equal "#@# 残るコメント\n", RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal "#@# 残るコメント\n", RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_old_since_in_since_in_since
@@ -236,7 +236,7 @@ class RuremaFreshTest < Minitest::Test
 #@end
 残る
     TEXT
-    assert_equal "残る\n" * 6, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal "残る\n" * 6, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_old_until_in_until
@@ -256,7 +256,7 @@ class RuremaFreshTest < Minitest::Test
 #@end
 残る
     TEXT
-    assert_equal "残る\n" * 2, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal "残る\n" * 2, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_old_until_in_until2
@@ -274,7 +274,7 @@ class RuremaFreshTest < Minitest::Test
 #@end
 残る
     TEXT
-    assert_equal "残る\n" * 1, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal "残る\n" * 1, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_old_since_in_until
@@ -291,7 +291,7 @@ class RuremaFreshTest < Minitest::Test
 #@end
 外だから残る
     TEXT
-    assert_equal "外だから残る\n" * 2, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal "外だから残る\n" * 2, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_fresh_since_in_old_until1
@@ -308,7 +308,7 @@ class RuremaFreshTest < Minitest::Test
 #@end
 外だから残る
     TEXT
-    # assert_equal "外だから残る\n" * 2, RuremaFresh.remove_old_version(src, '2.4.0')
+    # assert_equal "外だから残る\n" * 2, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_fresh_until_in_old_until
@@ -331,7 +331,7 @@ class RuremaFreshTest < Minitest::Test
 #@end
 外だから残る
     TEXT
-    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal dst, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_old_if_until
@@ -342,7 +342,7 @@ class RuremaFreshTest < Minitest::Test
 #@end
 外だから残る
     TEXT
-    assert_equal "外だから残る\n" * 2, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal "外だから残る\n" * 2, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_old_if_until2
@@ -353,7 +353,7 @@ class RuremaFreshTest < Minitest::Test
 #@end
 外だから残る
     TEXT
-    assert_equal "外だから残る\n" * 2, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal "外だから残る\n" * 2, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_old_if_until3
@@ -372,7 +372,7 @@ class RuremaFreshTest < Minitest::Test
 #@end
 外だから残る
     TEXT
-    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal dst, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_fresh_if_since0
@@ -389,7 +389,7 @@ class RuremaFreshTest < Minitest::Test
 条件分岐は消えるが、ここは残る
 外だから残る
     TEXT
-    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal dst, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_fresh_if_since1
@@ -408,7 +408,7 @@ class RuremaFreshTest < Minitest::Test
 #@end
 外だから残る
     TEXT
-    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal dst, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_fresh_if_since2
@@ -427,7 +427,7 @@ class RuremaFreshTest < Minitest::Test
 #@end
 外だから残る
     TEXT
-    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal dst, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_old_if_equal
@@ -442,7 +442,7 @@ class RuremaFreshTest < Minitest::Test
 外だから残る
     TEXT
 
-    assert_equal "外だから残る\n" * 2, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal "外だから残る\n" * 2, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_old_if_equal2
@@ -456,7 +456,7 @@ class RuremaFreshTest < Minitest::Test
 #@end
 外だから残る
     TEXT
-    assert_equal src, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal src, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_old_if_not_equal1
@@ -468,7 +468,7 @@ class RuremaFreshTest < Minitest::Test
 残る
     TEXT
 
-    assert_equal "残る\n" * 3, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal "残る\n" * 3, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
 #   def test_remove_old_if_not_equal2
@@ -480,7 +480,7 @@ class RuremaFreshTest < Minitest::Test
 # 残る
 #     TEXT
 
-#     assert_equal "残る\n" * 3, RuremaFresh.remove_old_version(src, '2.4.0')
+#     assert_equal "残る\n" * 3, RuremaFresh.remove_old_versions(src, '2.4.0')
 #   end
 
   def test_remove_old_double_if
@@ -496,7 +496,7 @@ class RuremaFreshTest < Minitest::Test
 残る
   TEXT
 
-    assert_equal "残る\n" * 3, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal "残る\n" * 3, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remove_old_if_and_fresh_if
@@ -519,7 +519,7 @@ class RuremaFreshTest < Minitest::Test
 #@end
 残る
       TEXT
-    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal dst, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_fresh_double_if
@@ -542,7 +542,7 @@ class RuremaFreshTest < Minitest::Test
 #@end
 残る
       TEXT
-    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal dst, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remain_fresh_if_equal
@@ -564,7 +564,7 @@ class RuremaFreshTest < Minitest::Test
 残る
   TEXT
 
-    assert_equal src, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal src, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remain_fresh_if_not_equal
@@ -578,7 +578,7 @@ class RuremaFreshTest < Minitest::Test
 残る
   TEXT
 
-    assert_equal src, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal src, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remain_reverse_if
@@ -593,7 +593,7 @@ class RuremaFreshTest < Minitest::Test
 残る
   TEXT
 
-    assert_equal src, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal src, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
   def test_remain_reverse_duble_if
@@ -607,6 +607,6 @@ class RuremaFreshTest < Minitest::Test
 残る
   TEXT
 
-    assert_equal src, RuremaFresh.remove_old_version(src, '2.4.0')
+    assert_equal src, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 end

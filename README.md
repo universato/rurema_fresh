@@ -35,7 +35,7 @@ puts "old"
 #@end
 #@end
 
-$ rurema_fresh version sample.rb --ruby=2.4.0
+$ rurema_fresh versions sample.rb --ruby=2.4.0
 sample.rd
 上記のファイルについて、Ruby2.4.0より古い条件分岐がありました
 9行、削除しました。
@@ -66,8 +66,8 @@ p "abc"[0] #=> 97
 #@end
   TEXT
 
-puts RuremaFresh.remove_old_version(src, '2.4.0')
-# alias RuremaFresh.version
+puts RuremaFresh.remove_old_versions(src, '2.4.0')
+# alias RuremaFresh.versions
 ```
 ↓
 ```rb
@@ -78,7 +78,7 @@ p "abc"[0] #=> "a"
 ```
 引数の文字列を破壊的に変更することはなく、新しい文字列を生成して返します。
 
-### if文の対応状況
+### if文の対応
 
 対応済み
 - `#@if( version >= "2.0.0")`は、`#@since 2.0.0`に置き換えた上で、古ければ削除します。

@@ -6,7 +6,7 @@ module RuremaFresh
 
     opt = OptionParser.new
     opt.version = RuremaFresh::VERSION
-    opt.banner         = "Usage: rurema_fresh version ./rurema_file [--ruby=#{DEFAULT_SUPPORT_VERSION}]"
+    opt.banner         = "Usage: rurema_fresh versions ./rurema_file [--ruby=#{DEFAULT_SUPPORT_VERSION}]"
     opt.summary_width  = 14
     opt.summary_indent = ' ' * 4
     opt.on('-r:', '--ruby', 'Ruby support version。サポートしたいRubyバージョン。'){ |version|
