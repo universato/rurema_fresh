@@ -12,13 +12,14 @@ module RuremaFresh
     texts = file_text.lines
     texts.each_with_index do |text, line_no|
       if text.start_with?('#@if')
-        puts '#@ifを検知しましたが、サポートしてないので終了します。'
+        puts '#@ifを検知しましたが、rurema_freshはサポートしてないので終了します。サポートしたいけど、未定。'
         exit
-        if text.include?('>') && !text.include?('<')
-          text.gsub!(/\#@if\s*\(\s*version\s*>=\s*(.+)\)/){ '#@since ' + $1 }
-        elsif text.include?('<') && !text.include?('>') && !text.include?('<=')
-          text.gsub!(/\#@if\s*\(\s*version\s*>=\s*(.+)\)/){ '#@until ' + $1 }
-        end
+        # [DRAFT]
+        # if text.include?('>') && !text.include?('<')
+        #   text.gsub!(/\#@if\s*\(\s*version\s*>=\s*(.+)\)/){ '#@since ' + $1 }
+        # elsif text.include?('<') && !text.include?('>') && !text.include?('<=')
+        #   text.gsub!(/\#@if\s*\(\s*version\s*>=\s*(.+)\)/){ '#@until ' + $1 }
+        # end
       end
 
       if text.start_with?('#@since ', '#@until ')
@@ -65,7 +66,7 @@ module RuremaFresh
     '--ruby:' => 'Ruby support version; サポートしたいRubyバージョン;'
   }.freeze
 
-  # --wip
+  # [TODO][WIP]
   def self.options
     opt = OptionParser.new
     opt.banner         = 'Usage: rurema_fresh [--ruby]'
@@ -97,6 +98,7 @@ module RuremaFresh
 end
 
 if $0 == __FILE__
+  puts "#{__FILE__}が直接実行されました。"
   text =  DATA.readlines.join
   puts RuremaFresh.remove_old_version(text, "2.4.0")
 end
