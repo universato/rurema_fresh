@@ -35,7 +35,10 @@ puts "old"
 #@end
 #@end
 
-$ rurema_fresh sample.rb --ruby==2.4.0
+$ rurema_fresh version sample.rb --ruby==2.4.0
+sample.rd
+上記のファイルについて、Ruby2.4.0より古い条件分岐がありました
+9行、削除しました。
 
 $ cat sample.rd
 #@samplecode
@@ -64,7 +67,8 @@ p "abc"[0] #=> 97
 #@end
   TEXT
 
-p RuremaFresh.remove_old_version(src, '2.4.0')
+puts RuremaFresh.remove_old_version(src, '2.4.0')
+# alias RuremaFresh.version
 ```
 ↓
 ```rb
@@ -89,9 +93,9 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 
 ## License
 
-The gem is available as open source under the terms of the CC0.
+The gem is available as open source under the terms of the MIT.
 
-作成者は責任をとらないし、自由に使ってください。
+自由に使ってください。
 
 ## Code of Conduct
 

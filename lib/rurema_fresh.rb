@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
+require_relative "./rurema_fresh/constants.rb"
 require_relative "./rurema_fresh/option.rb"
 require_relative "./rurema_fresh/version.rb"
 
 module RuremaFresh
   class Error < StandardError; end
 
-  def self.remove_old_version(file_text, support_version)
+  def self.remove_old_version(file_text, support_version = DEFAULT_SUPPORT_VERSION)
+    support_version = add_minor(support_version)
+
     blocks = []
     delete_mode = false
     texts = file_text.lines
@@ -14,7 +17,7 @@ module RuremaFresh
       if text.start_with?('#@if')
         puts '#@ifを検知しましたが、rurema_freshはサポートしてないので終了します。サポートしたいけど、未定。'
         exit
-        # [DRAFT]
+        # [DRAFT][WIP][TODO]
         # if text.include?('>') && !text.include?('<')
         #   text.gsub!(/\#@if\s*\(\s*version\s*>=\s*(.+)\)/){ '#@since ' + $1 }
         # elsif text.include?('<') && !text.include?('>') && !text.include?('<=')
@@ -61,23 +64,51 @@ module RuremaFresh
 
     texts.join
   end
-
-  def self.main(support_version = '2.4.0')
-    file_path = ARGV.shift
-    buffer = IO.read(file_path)
-    puts buffer.lines[0, 4]
-    buffer = RuremaFresh.remove_old_version(buffer, support_version)
-    IO.write(file_path, buffer)
+  class << self
+    alias version remove_old_version
   end
 
   private
+    # module RuremaFresh
+    #   directive = '#@since 2.4.0'
+    #   RuremaFresh.directive_swap(directive)
+    #   p directive  # => '#@until 2.4.0'
+    #   RuremaFresh.directive_swap(directive)
+    #   p directive # =>  '#@since 2.4.0'
+    # end
     def self.directive_swap(directive)
       raise ArgumentError unless directive == '#@since' || directive == '#@until'
       directive.sub!('#@since', '#@_____')
       directive.sub!('#@until', '#@since')
       directive.sub!('#@_____', '#@until')
     end
+
+    # module RuremaFresh
+    #   self.add_minor(0)     # => "0.0.0"
+    #   self.add_minor(2)     # => "2.0.0"
+    #   self.add_minor("2")   # => "2.0.0"
+    #   self.add_minor(2.4)   # => "2.4.0"
+    #   self.add_minor("2.4") # => "2.4.0"
+    # end
+    def self.add_minor(version)
+      version = version.to_s
+      if Gem::Version.correct?(version)
+        case version.count(".")
+        when 0
+          version + ".0.0"
+        when 1
+          version + ".0"
+        else
+          version
+        end
+      else
+        puts "#{__FILE__}: #{__LINE__}行目でエラーが生じました。"
+        puts "rurema_fresh: 不正なバージョン入力です。終了します。"
+        exit
+      end
+    end
 end
+
 
 # For debug
 if $0 == __FILE__
