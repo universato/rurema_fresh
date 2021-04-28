@@ -7,8 +7,7 @@ case ARGV[0]
 when "version"
   # rurema_fresh version ./refm/api/src/_builtin/Array --ruby=2.4.0
   # puts "rurema_freshコマンドを実行するよ"
-  ARGV.shift
-
+  ARGV.shift # => "version"
   options = RuremaFresh.options
   support_version = options[:ruby] || RuremaFresh::DEFAULT_SUPPORT_VERSION
 
