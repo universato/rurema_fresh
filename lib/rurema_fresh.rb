@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'optparse'
-require_relative "rurema_fresh/version"
+require_relative "./rurema_fresh/option.rb"
+require_relative "./rurema_fresh/version.rb"
 
 module RuremaFresh
   class Error < StandardError; end
@@ -60,24 +60,6 @@ module RuremaFresh
     end
 
     texts.join
-  end
-
-  OPTION_EXPLANATIONS = {
-    '--ruby:' => 'Ruby support version; サポートしたいRubyバージョン;'
-  }.freeze
-
-  # [TODO][WIP]
-  def self.options
-    opt = OptionParser.new
-    opt.banner         = 'Usage: rurema_fresh [--ruby]'
-    opt.summary_width  = 14
-    opt.summary_indent = ' ' * 4
-    opt.default_argv   = ARGV
-    # OPTION_EXPLANATIONS.each { |option, explanation| opt.on(option, explanation) }
-    opt.on('-r:', '--ruby', 'Ruby support version; サポートしたいRubyバージョン;')
-    opt.on_tail('-h', '--help', 'show this help') { puts opt.help and exit }
-
-    opt.getopts
   end
 
   def self.main(support_version = '2.4.0')
