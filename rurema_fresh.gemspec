@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary       = "るりまの since & until の古い分岐を削除します"
   spec.description   = "ifの分岐には対応したいけど、対応は未定です。"
   spec.homepage      = "https://github.com/universato/rurema_fresh"
-  spec.license       = "CC0"
+  spec.license       = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.4.0")
 
   spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
