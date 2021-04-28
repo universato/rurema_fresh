@@ -332,4 +332,158 @@ class RuremaFreshTest < Minitest::Test
     TEXT
     assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
   end
+
+  def test_remove_old_if_until
+    src = <<-'TEXT'
+外だから残る
+#@if (version < "1.9.4")
+消える
+#@end
+外だから残る
+    TEXT
+    assert_equal "外だから残る\n" * 2, RuremaFresh.remove_old_version(src, '2.4.0')
+  end
+
+  def test_remove_old_if_until2
+    src = <<-'TEXT'
+外だから残る
+#@if (version < "2.4.0")
+消える
+#@end
+外だから残る
+    TEXT
+    assert_equal "外だから残る\n" * 2, RuremaFresh.remove_old_version(src, '2.4.0')
+  end
+
+  def test_remove_old_if_until3
+    src = <<-'TEXT'
+外だから残る
+#@if (version <= "2.4.0")
+残る
+#@end
+外だから残る
+    TEXT
+
+    dst = <<-'TEXT'
+外だから残る
+#@until 2.4.1
+残る
+#@end
+外だから残る
+    TEXT
+    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+  end
+
+  def test_remove_fresh_if_since0
+    src = <<-'TEXT'
+外だから残る
+#@if ( version >=  "2.4.0" )
+条件分岐は消えるが、ここは残る
+#@end
+外だから残る
+    TEXT
+
+    dst = <<-'TEXT'
+外だから残る
+条件分岐は消えるが、ここは残る
+外だから残る
+    TEXT
+    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+  end
+
+  def test_remove_fresh_if_since1
+    src = <<-'TEXT'
+外だから残る
+#@if ( version >=  "4.0.0" )
+残る
+#@end
+外だから残る
+    TEXT
+
+    dst = <<-'TEXT'
+外だから残る
+#@since 4.0.0
+残る
+#@end
+外だから残る
+    TEXT
+    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+  end
+
+  def test_remove_fresh_if_since2
+    src = <<-'TEXT'
+外だから残る
+#@if ( version >  "4.0.0" )
+残る
+#@end
+外だから残る
+    TEXT
+
+    dst = <<-'TEXT'
+外だから残る
+#@since 4.0.1
+残る
+#@end
+外だから残る
+    TEXT
+    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+  end
+
+  def test_remove_old_if_equal
+    src = <<-'TEXT'
+外だから残る
+#@if(version=="1.0.0")
+消える
+#@end
+外だから残る
+    TEXT
+
+    assert_equal "外だから残る\n" * 2, RuremaFresh.remove_old_version(src, '2.4.0')
+  end
+
+  def test_remove_old_if_equal2
+    # バージョンを書き換えてしまう。特殊。
+#     skip
+
+#     src = <<-'TEXT'
+# 外だから残る
+# #@if ( version ==  "2.4.0" )
+# 残る
+# #@end
+# 外だから残る
+#     TEXT
+
+#     dst = <<-'TEXT'
+# 外だから残る
+# #@until 2.4.1
+# 残る
+# #@end
+# 外だから残る
+#     TEXT
+#     assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+  end
+
+  def test_remove_old_if_not_equal1
+    src = <<-'TEXT'
+残る
+#@if ( version !=  "1.0.0" )
+残る
+#@end
+残る
+    TEXT
+
+    assert_equal "残る\n" * 3, RuremaFresh.remove_old_version(src, '2.4.0')
+  end
+
+#   def test_remove_old_if_not_equal2
+#     src = <<-'TEXT'
+# 残る
+# #@if ( version !=  "2.4.1" )
+# 残る
+# #@end
+# 残る
+#     TEXT
+
+#     assert_equal "残る\n" * 3, RuremaFresh.remove_old_version(src, '2.4.0')
+#   end
 end

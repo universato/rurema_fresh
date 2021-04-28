@@ -12,10 +12,50 @@ module RuremaFresh
 
     blocks = []
     delete_mode = false
+
+    file_text = file_text.gsub(/^\#@if\s*\(\s*version\s*([<>!=]=?)\s*["'](.+)["']\s*\)/){
+      op = $1
+      version = $2
+      if op.include?('<')
+        if op.include?('=')
+          # puts "RuremaFresh Alert: if (version <= #{version}) を無理やり書きかえます。"
+          # puts "-> \#@until #{version.succ} に書き換えます。"
+          "\#@until #{version.succ}"
+        else
+          "\#@until #{version}"
+        end
+      elsif op.include?('>')
+        if op.include?('=')
+          "\#@since #{version}"
+        else
+          # puts "RuremaFresh Alert: if (version > #{version})  を無理やり書きかえます。"
+          # puts "-> \#@since #{version.succ} に書き換えます。"
+          "\#@since #{version.succ}"
+        end
+      elsif op == "=="
+        if version < support_version
+          "\#@until #{version.succ}"
+        else
+          puts "RuremaFresh versionがサポートしてないif == です。変更せず終了します。"
+        end
+      elsif op == "!="
+        if version < support_version
+          "\#@since #{version}"
+        else
+          puts "RuremaFresh versionがサポートしてないif != です。変更せず終了します。"
+        end
+      else
+        puts "RuremaFresh #{__FILE__}: #{__LINE__}行目:"
+        puts "本来、ここは実行されません。異常終了します。"
+        exit
+      end
+    }
+
     texts = file_text.lines
     texts.each_with_index do |text, line_no|
       if text.start_with?('#@if')
-        puts '#@ifを検知しましたが、rurema_freshはサポートしてないので終了します。サポートしたいけど、未定。'
+        puts "#{line_no + 1}行目に、\#@ifを検知しました・"
+        puts 'rurema_freshは全てのifをサポートしてないので終了します。サポートしたいけど、未定。'
         exit
         # [DRAFT][WIP][TODO]
         # if text.include?('>') && !text.include?('<')
