@@ -529,4 +529,63 @@ class RuremaFreshTest < Minitest::Test
       TEXT
     assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
   end
+
+  def test_fresh_double_if
+    src = <<-'TEXT'
+残る
+#@if ( "3.0.0" < version and version < "3.1.0"  )
+残る
+#@else
+残る
+#@end
+残る
+  TEXT
+
+    dst = <<-'TEXT'
+残る
+#@if ( "3.0.0" < version and version < "3.1.0"  )
+残る
+#@else
+残る
+#@end
+残る
+      TEXT
+    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+  end
+
+  def test_remain_fresh_if_equal
+    src = <<-'TEXT'
+残る
+#@if (version=="3.1.0")
+残る
+#@samplecode
+残る
+#@end
+残る
+#@else
+残る
+#@samplecode
+残る
+#@end
+残る
+#@end
+残る
+  TEXT
+
+    assert_equal src, RuremaFresh.remove_old_version(src, '2.4.0')
+  end
+
+  def test_remain_fresh_if_not_equal
+    src = <<-'TEXT'
+残る
+#@if ( version  !=  "3.1.0"  )
+残る
+#@else
+残る
+#@end
+残る
+  TEXT
+
+    assert_equal src, RuremaFresh.remove_old_version(src, '2.4.0')
+  end
 end

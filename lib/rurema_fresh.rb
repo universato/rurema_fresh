@@ -13,9 +13,10 @@ module RuremaFresh
     blocks = []
     delete_mode = false
 
-    file_text = file_text.gsub(/^\#@if\s*\(\s*version\s*([<>!=]=?)\s*["'](.+)["']\s*\)/){
-      op = $1
-      version = $2
+    file_text = file_text.gsub(/^(\#@if\s*\(\s*version\s*([<>!=]=?)\s*["'](.+)["']\s*\))/){
+      zentai = $1
+      op = $2
+      version = $3
       if op.include?('<')
         if op.include?('=')
           # puts "RuremaFresh Alert: if (version <= #{version}) を無理やり書きかえます。"
@@ -36,24 +37,26 @@ module RuremaFresh
         if version < support_version
           "\#@until #{version.succ}"
         else
-          puts "RuremaFresh versionがサポートしてないif == です。変更せず終了します。"
+          zentai.sub('#@if(', '#@if (')
         end
       elsif op == "!="
         if version < support_version
           "\#@since #{version}"
         else
-          puts "RuremaFresh versionがサポートしてないif != です。変更せず終了します。"
+          zentai.sub('#@if(', '#@if (')
         end
       else
         puts "RuremaFresh #{__FILE__}: #{__LINE__}行目:"
         puts "本来、ここは実行されません。異常終了します。"
         exit
       end
-    }.gsub(/^\#@if\s*\(\s*["'](.+)["']\s*(<=?)\s*version\s+and\s+version\s*(<=?)\s*["'](.+)["']\s*\)/){
+    }.gsub(/^(\#@if\s*\(\s*["'](.+)["']\s*(<=?)\s*version\s+and\s+version\s*(<=?)\s*["'](.+)["']\s*\))/){
 
-      version1 = $1
-      op = $3
-      version2 = $4
+      zentai = $1
+      version1 = $2
+      _op = $3
+      op = $4
+      version2 = $5
 
       if version1 < support_version
         if op.include?('=')
@@ -64,24 +67,12 @@ module RuremaFresh
           "\#@until #{version2}"
         end
       else
-        puts "RuremaFresh versionがサポートしてない2式のifです。変更せず終了します。"
+        zentai.sub('#@if(', '#@if (')
       end
     }
 
     texts = file_text.lines
     texts.each_with_index do |text, line_no|
-      if text.start_with?('#@if')
-        puts "#{line_no + 1}行目に、\#@ifを検知しました・"
-        puts 'rurema_freshは全てのifをサポートしてないので終了します。サポートしたいけど、未定。'
-        exit
-        # [DRAFT][WIP][TODO]
-        # if text.include?('>') && !text.include?('<')
-        #   text.gsub!(/\#@if\s*\(\s*version\s*>=\s*(.+)\)/){ '#@since ' + $1 }
-        # elsif text.include?('<') && !text.include?('>') && !text.include?('<=')
-        #   text.gsub!(/\#@if\s*\(\s*version\s*>=\s*(.+)\)/){ '#@until ' + $1 }
-        # end
-      end
-
       if text.start_with?('#@since ', '#@until ')
         blocks << text.dup
         version = text.split[1]
@@ -90,6 +81,7 @@ module RuremaFresh
           text.clear
         end
       elsif text.start_with?('#@else')
+        next if blocks[-1].start_with?('#@if')
         directive, version = blocks.pop.split
         if version <= support_version
           text.clear
@@ -102,7 +94,7 @@ module RuremaFresh
         if (directive == '#@since' || directive == '#@until') && version <= support_version
           text.clear
           delete_mode = false
-        elsif directive == '#@samplecode' && delete_mode
+        elsif (directive == '#@samplecode' || directive == '#@if') && delete_mode
           text.clear
         end
 
@@ -111,7 +103,7 @@ module RuremaFresh
             delete_mode = true
           end
         end
-      elsif text.start_with?('#@samplecode')
+      elsif text.start_with?('#@samplecode', '#@if')
         blocks << text.dup
         text.clear if delete_mode
       else
@@ -134,7 +126,7 @@ module RuremaFresh
     #   p directive # =>  '#@since 2.4.0'
     # end
     def self.directive_swap(directive)
-      raise ArgumentError unless directive == '#@since' || directive == '#@until'
+      raise ArgumentError.new('引数は、#@since or #@until のみです') unless directive == '#@since' || directive == '#@until'
       directive.sub!('#@since', '#@_____')
       directive.sub!('#@until', '#@since')
       directive.sub!('#@_____', '#@until')
