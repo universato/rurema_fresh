@@ -4,12 +4,12 @@ Welcome to your new gem! In this directory, you'll find the files you need to be
 
 ## Installation
 
-主なインストール方法を、2つ紹介します。
+主なインストール方法を紹介します。
 
-- `bundler`を用いてインストールする。
-  1. `Gemfile`に`gem 'rurema_fresh'`と書きます。
+- `bundler`を用いてインストールする方法
+  1. `Gemfile`に`gem 'rurema_fresh', :github => 'universato/rurema_fresh'`と書きます。
   2. コマンド`bundle install`で、Gemfile(& Gemfile.lock)に従って、インストール。
-- コマンド`gem install rurema_fresh`を打ち、インストール。
+<!-- - コマンド`gem install rurema_fresh`を打ち、インストール。 -->
 
 ## Usage
 

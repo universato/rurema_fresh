@@ -40,7 +40,7 @@ when "versions"
   end
 else
   if ARGV.empty?
-    puts "rurema_fresh は、version サブコマンドを持ちます。"
+    puts "rurema_fresh は、versions サブコマンドを持ちます。"
     puts "次のように使えます。"
     puts "rurema_fresh versions ./refm/api/src/_builtin/Array --ruby=2.4.0"
     puts "疑問点があったら、ruby-jpのruremaチャンネルやGitHubで聞いてください"
