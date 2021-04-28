@@ -367,7 +367,7 @@ class RuremaFreshTest < Minitest::Test
 
     dst = <<-'TEXT'
 外だから残る
-#@until 2.4.1
+#@until 2.5.0
 残る
 #@end
 外だから残る
@@ -422,7 +422,7 @@ class RuremaFreshTest < Minitest::Test
 
     dst = <<-'TEXT'
 外だから残る
-#@since 4.0.1
+#@since 4.1.0
 残る
 #@end
 外だから残る
@@ -447,24 +447,16 @@ class RuremaFreshTest < Minitest::Test
 
   def test_remove_old_if_equal2
     # バージョンを書き換えてしまう。特殊。
-#     skip
+    # skip
 
-#     src = <<-'TEXT'
-# 外だから残る
-# #@if ( version ==  "2.4.0" )
-# 残る
-# #@end
-# 外だから残る
-#     TEXT
-
-#     dst = <<-'TEXT'
-# 外だから残る
-# #@until 2.4.1
-# 残る
-# #@end
-# 外だから残る
-#     TEXT
-#     assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+    src = <<-'TEXT'
+外だから残る
+#@if ( version ==  "2.4.0" )
+残る
+#@end
+外だから残る
+    TEXT
+    assert_equal src, RuremaFresh.remove_old_version(src, '2.4.0')
   end
 
   def test_remove_old_if_not_equal1
@@ -579,6 +571,35 @@ class RuremaFreshTest < Minitest::Test
     src = <<-'TEXT'
 残る
 #@if ( version  !=  "3.1.0"  )
+残る
+#@else
+残る
+#@end
+残る
+  TEXT
+
+    assert_equal src, RuremaFresh.remove_old_version(src, '2.4.0')
+  end
+
+  def test_remain_reverse_if
+    src = <<-'TEXT'
+残る
+#@if (   "3.1.0" > version )
+#@if ( "2.7.0 > version ")
+#@end
+#@else
+残る
+#@end
+残る
+  TEXT
+
+    assert_equal src, RuremaFresh.remove_old_version(src, '2.4.0')
+  end
+
+  def test_remain_reverse_duble_if
+    src = <<-'TEXT'
+残る
+#@if ( version < 2.7.0 and version < 3.1.0)
 残る
 #@else
 残る

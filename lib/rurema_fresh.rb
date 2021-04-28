@@ -21,7 +21,7 @@ module RuremaFresh
         if op.include?('=')
           # puts "RuremaFresh Alert: if (version <= #{version}) を無理やり書きかえます。"
           # puts "-> \#@until #{version.succ} に書き換えます。"
-          "\#@until #{version.succ}"
+          "\#@until #{self.ruby_advance(version)}"
         else
           "\#@until #{version}"
         end
@@ -31,11 +31,11 @@ module RuremaFresh
         else
           # puts "RuremaFresh Alert: if (version > #{version})  を無理やり書きかえます。"
           # puts "-> \#@since #{version.succ} に書き換えます。"
-          "\#@since #{version.succ}"
+          "\#@since #{self.ruby_advance(version)}"
         end
       elsif op == "=="
         if version < support_version
-          "\#@until #{version.succ}"
+          "\#@until #{self.ruby_advance(version)}"
         else
           zentai.sub('#@if(', '#@if (')
         end
@@ -47,7 +47,7 @@ module RuremaFresh
         end
       else
         puts "RuremaFresh #{__FILE__}: #{__LINE__}行目:"
-        puts "本来、ここは実行されません。異常終了します。"
+        puts "本来、ここは実行されないはずです。異常終了します。"
         exit
       end
     }.gsub(/^(\#@if\s*\(\s*["'](.+)["']\s*(<=?)\s*version\s+and\s+version\s*(<=?)\s*["'](.+)["']\s*\))/){
@@ -155,6 +155,18 @@ module RuremaFresh
         puts "rurema_fresh: 不正なバージョン入力です。終了します。"
         exit
       end
+    end
+
+    # module RuremaFresh
+    #   self.advance("1.8.7") # => "1.9.0"
+    #   self.advance("1.9.1") # => "2.0.0"
+    #   self.advance("2.0.0") # => "2.1.0"
+    #   self.advance("2.4.0") # => "2.5.0"
+    #   self.advance("2.7.0") # => "3.0.0"
+    # end
+    def self.ruby_advance(version)
+      version = Gem::Version.new(version).bump.version
+      self.add_minor(version).gsub("2.8.0", "3.0.0")
     end
 end
 
