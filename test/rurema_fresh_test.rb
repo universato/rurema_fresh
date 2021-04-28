@@ -3,6 +3,9 @@
 require 'csv'
 require_relative "./test_helper.rb"
 
+# もともとCSVで、対象の文字列と実行結果をいれてましたが、
+# GitHubのCSVはセル内の改行に対応してないのでやめました。
+
 class RuremaFreshTest < Minitest::Test
   def test_that_it_has_a_version_number
     refute_nil ::RuremaFresh::VERSION

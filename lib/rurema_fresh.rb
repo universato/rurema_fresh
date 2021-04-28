@@ -97,20 +97,20 @@ module RuremaFresh
     end
 end
 
+# For debug
 if $0 == __FILE__
-  puts "#{__FILE__}が直接実行されました。"
-  text =  DATA.readlines.join
-  puts RuremaFresh.remove_old_version(text, "2.4.0")
+  # puts "#{__FILE__}が直接実行されました。"
+  # text =  DATA.readlines.join
+  # puts RuremaFresh.remove_old_version(text, "2.4.0")
 end
 
 __END__
-#@until 1.9.2
-#@# 残らない1
-#@since 1.9.1
-残らない2
+#@samplecode
+#@since 1.9.0
+# 0番目の文字を返す
+p "abc"[0] #=> "a"
 #@else
-残らない3
+# 0番目の文字コードを返す
+p "abc"[0] #=> 97
 #@end
-残らない4
 #@end
-残る
