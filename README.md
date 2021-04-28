@@ -22,7 +22,7 @@ Command `rurema_fresh versions` destructively modifies the file.
 コマンドを使って、ファイルを書き換えます。
 念のためGitでコミットを打つなど戻せる状態でコマンドを実行してください。
 
-`gem`コマンドではなく、``bundler`の`bundle`コマンドでGemfileで指定しインストールしている場合は、
+`gem`コマンドではなく、`bundler`の`bundle`コマンドでGemfileで指定しインストールしている場合は、
 `bundler`を通してコマンドを打てるように、
 `bundle exec rurema_fresh versions`コマンドを打って下さい。
 
