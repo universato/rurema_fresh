@@ -56,6 +56,7 @@ class RuremaFreshTest < Minitest::Test
 残る
 #@until 1.8.7
 残らない
+@see [[m:Kernel.#puts]]
 #@end
 残る
     TEXT
@@ -433,7 +434,10 @@ class RuremaFreshTest < Minitest::Test
     src = <<-'TEXT'
 外だから残る
 #@if(version=="1.0.0")
-消える
+#@samplecode
+条件分岐ごと消える
+#@#コメントもコードも消える
+#@end
 #@end
 外だから残る
     TEXT
@@ -486,4 +490,43 @@ class RuremaFreshTest < Minitest::Test
 
 #     assert_equal "残る\n" * 3, RuremaFresh.remove_old_version(src, '2.4.0')
 #   end
+
+  def test_remove_old_double_if
+    src = <<-'TEXT'
+残る
+#@if ( "1.0.0" < version and version < "2.4.0"  )
+#@samplecode
+条件分岐ごと消える
+#@end
+#@else
+残る
+#@end
+残る
+  TEXT
+
+    assert_equal "残る\n" * 3, RuremaFresh.remove_old_version(src, '2.4.0')
+  end
+
+  def test_remove_old_if_and_fresh_if
+    src = <<-'TEXT'
+残る
+#@if ( "1.0.0" < version and version < "2.7.0"  )
+残る
+#@else
+残る
+#@end
+残る
+  TEXT
+
+    dst = <<-'TEXT'
+残る
+#@until 2.7.0
+残る
+#@else
+残る
+#@end
+残る
+      TEXT
+    assert_equal dst, RuremaFresh.remove_old_version(src, '2.4.0')
+  end
 end

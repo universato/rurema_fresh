@@ -49,6 +49,23 @@ module RuremaFresh
         puts "本来、ここは実行されません。異常終了します。"
         exit
       end
+    }.gsub(/^\#@if\s*\(\s*["'](.+)["']\s*(<=?)\s*version\s+and\s+version\s*(<=?)\s*["'](.+)["']\s*\)/){
+
+      version1 = $1
+      op = $3
+      version2 = $4
+
+      if version1 < support_version
+        if op.include?('=')
+          # puts "RuremaFresh Alert: if (version <= #{version}) を無理やり書きかえます。"
+          # puts "-> \#@until #{version.succ} に書き換えます。"
+          "\#@until #{version2.succ}"
+        else
+          "\#@until #{version2}"
+        end
+      else
+        puts "RuremaFresh versionがサポートしてない2式のifです。変更せず終了します。"
+      end
     }
 
     texts = file_text.lines
