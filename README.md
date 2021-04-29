@@ -105,6 +105,39 @@ p "abc"[0] #=> "a"
 
 これらの式が来たときは、スルーします。
 
+### 注意点
+
+`#@since`は「以上」の指定ですが、`#@until`は「未満」の指定です。
+
+#### since の例
+
+`sample_since.rd`
+```sh
+#@since 3.0.0
+3.0.0以上の環境で出力される。
+#@end
+```
+
+`rurema_fresh versions sample_since.rd --ruby=3.0.0`
+
+このコマンドはサポートの最低バージョンとして`3.0.0`を指定しており、
+条件分岐が不要になり、中身の文章「3.0.0以上の環境で出力される。」だけが出力されます。
+
+#### until の例
+
+`sample_until.rd`
+```sh
+#@until 3.0.0
+3.0.0未満の環境で出力される。
+#@end
+```
+
+`rurema_fresh versions sample_until.rd --ruby=3.0.0`
+
+このコマンドはサポートの最低バージョンとして`3.0.0`を指定しており、
+条件分岐が不要になり、中身の文章は`3.0.0`未満でのみ必要とされ、
+`3.0.0`以上では必要なくなり、条件分岐のブロックとともに中身も消えます。
+
 ## Development
 
 <!-- After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

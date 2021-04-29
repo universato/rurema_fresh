@@ -24,6 +24,24 @@ class RuremaFreshTest < Minitest::Test
     class_eval(str)
   end
 
+  def test_sample
+    src = <<-'TEXT'
+#@since 3.0.0
+3.0.0以上の環境で出力される
+#@end
+#@until 3.0.0
+3.0.0未満の環境で出力される
+#@end
+    TEXT
+
+    dst = "3.0.0以上の環境で出力される\n"
+    assert_equal dst, RuremaFresh.remove_old_versions(src, '3.0.0')
+    assert_equal dst, RuremaFresh.remove_old_versions(src, '3.0')
+    assert_equal dst, RuremaFresh.remove_old_versions(src, 3.0)
+    assert_equal dst, RuremaFresh.remove_old_versions(src, '3')
+    assert_equal dst, RuremaFresh.remove_old_versions(src, 3)
+  end
+
   def test_remove_old_since1
     src = <<-'TEXT'
 #@since 1.8.7
