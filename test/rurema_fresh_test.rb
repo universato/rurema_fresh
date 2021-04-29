@@ -3,14 +3,13 @@
 require 'csv'
 require_relative "./test_helper.rb"
 
-# もともとCSVで、対象の文字列と実行結果をいれてましたが、
-# GitHubのCSVはセル内の改行に対応してないのでやめました。
-
 class RuremaFreshTest < Minitest::Test
   def test_that_it_has_a_version_number
     refute_nil ::RuremaFresh::VERSION
   end
 
+  # もともとCSVで、対象の文字列と実行結果をいれてましたが、
+  # GitHubのCSVはセル内の改行に対応してないのでやめました。
   csv_path = File.expand_path('../testcases.csv', __FILE__)
   CSV.foreach(csv_path, headers: true).with_index(1) do |row, i|
     if row['support_version'].nil?
@@ -123,7 +122,7 @@ class RuremaFreshTest < Minitest::Test
     assert_equal "残る\n", RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
-  def test_remove_fresh_since
+  def test_remain_fresh_since
     dst = src = <<-'TEXT'
 #@since 3.1.0
 条件分岐の分岐地点が新しいので全て残ります。
@@ -135,7 +134,7 @@ class RuremaFreshTest < Minitest::Test
     assert_equal dst, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
-  def test_remove_until_since
+  def test_remain_until_since
     dst = src = <<-'TEXT'
 #@until 3.1.0
 条件分岐の分岐地点が新しいので全て残ります。
@@ -295,20 +294,25 @@ class RuremaFreshTest < Minitest::Test
   end
 
   def test_remove_fresh_since_in_old_until1
-    # 古い条件分岐の中にそれより新しい条件分岐があるという誤った条件分岐
-    # skip
-    ___src = <<-'TEXT'
-外だから残る
+    # 条件分岐の古いコードの中にそれより新しい条件分岐があるという誤った条件分岐
+    # こういったケースでは、適切に削除できない。
+    _src = <<-'TEXT'
 #@until 1.9.2
 #@since 3.3.0
-残らない
+残る
 #@else
 残らない
 #@end
 #@end
-外だから残る
     TEXT
-    # assert_equal "外だから残る\n" * 2, RuremaFresh.remove_old_versions(src, '2.4.0')
+
+    _dst = <<-'TEXT'
+#@since 3.3.0
+#@else
+#@end
+    TEXT
+
+    # assert_equal _dst, RuremaFresh.remove_old_versions(_src, '2.4.0')
   end
 
   def test_remove_fresh_until_in_old_until
@@ -445,10 +449,7 @@ class RuremaFreshTest < Minitest::Test
     assert_equal "外だから残る\n" * 2, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
-  def test_remove_old_if_equal2
-    # バージョンを書き換えてしまう。特殊。
-    # skip
-
+  def test_remain_old_if_equal2
     src = <<-'TEXT'
 外だから残る
 #@if ( version ==  "2.4.0" )
@@ -471,17 +472,17 @@ class RuremaFreshTest < Minitest::Test
     assert_equal "残る\n" * 3, RuremaFresh.remove_old_versions(src, '2.4.0')
   end
 
-#   def test_remove_old_if_not_equal2
-#     src = <<-'TEXT'
-# 残る
-# #@if ( version !=  "2.4.1" )
-# 残る
-# #@end
-# 残る
-#     TEXT
+  def test_remain_fresh_if_not_equal2
+    src = <<-'TEXT'
+残る
+#@if ( version !=  "2.4.1" )
+残る
+#@end
+残る
+    TEXT
 
-#     assert_equal "残る\n" * 3, RuremaFresh.remove_old_versions(src, '2.4.0')
-#   end
+    assert_equal src, RuremaFresh.remove_old_versions(src, '2.4.0')
+  end
 
   def test_remove_old_double_if
     src = <<-'TEXT'
@@ -608,5 +609,98 @@ class RuremaFreshTest < Minitest::Test
   TEXT
 
     assert_equal src, RuremaFresh.remove_old_versions(src, '2.4.0')
+  end
+
+  def test_reamain_support27
+    src = <<-'TEXT'
+#@if (3.1 <= version and version<3.3)
+残る
+#@since 3.0
+残る
+#@end
+残る
+#@since 3.2
+残る
+#@end
+残る
+#@else
+残る
+#@until 3.4
+残る
+#@# 残るコメント
+#@samplecode
+#@since 3.0
+残る
+#@end
+#@end
+残る
+#@end
+残る
+#@end
+  TEXT
+
+    assert_equal src, RuremaFresh.remove_old_versions(src, '2.7.0')
+    assert_equal src, RuremaFresh.remove_old_versions(src, 2.7)
+  end
+
+  def test_remove_support27
+    src = <<-'TEXT'
+#@if(version<'2.7.0')
+#@#消えるコメント
+#@end
+#@if('1.8.7'<= version and version < '2.1')
+条件とともに全て消える。
+#@if(version != '1.9')
+#@end
+#@end
+    TEXT
+
+    assert_equal '', RuremaFresh.remove_old_versions(src, '2.7.0')
+  end
+
+  def test_remove_support27a
+    src = <<-'TEXT'
+#@until 2.1
+条件とともに全て消える。
+#@if(version != '1.9')
+#@end
+#@end
+    TEXT
+
+    assert_equal '', RuremaFresh.remove_old_versions(src, '2.7.0')
+  end
+
+
+  def test_change_support27
+    src = <<-'TEXT'
+#@if('1.8.7'<= version and version < '2.1')
+条件とともに全て消える。
+#@end
+    TEXT
+
+    assert_equal '', RuremaFresh.remove_old_versions(src, '2.7.0')
+  end
+
+  def test_delete_support3
+    src = <<-'TEXT'
+#@if('1.8.7'<= version and version < '2.1')
+条件とともに全て消える。
+#@end
+#@until 3.0.0
+消える
+#@end
+#@until 3.0
+消える
+#@end
+#@until 3
+消える
+#@end
+    TEXT
+
+    assert_equal '', RuremaFresh.remove_old_versions(src, '3.0.0')
+    assert_equal '', RuremaFresh.remove_old_versions(src, '3.0')
+    assert_equal '', RuremaFresh.remove_old_versions(src, 3.0)
+    assert_equal '', RuremaFresh.remove_old_versions(src, '3')
+    assert_equal '', RuremaFresh.remove_old_versions(src, 3)
   end
 end
