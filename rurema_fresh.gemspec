@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["universato"]
   spec.email         = ["universato@gmail.com"]
 
-  spec.summary       = "るりまの since & until の古い分岐を削除します"
-  spec.description   = "ifの分岐には対応したいけど、対応は未定です。"
+  spec.summary       = "るりまの古い分岐を削除し綺麗にします。"
+  spec.description   = "簡単に、るりまの古い分岐を削除できます。since, until, if の古い分岐を削除し、可能であれば if を since や until に置き換えます。"
   spec.homepage      = "https://github.com/universato/rurema_fresh"
   spec.license       = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.4.0")
