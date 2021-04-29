@@ -161,16 +161,4 @@ Ruby標準の`minitest`を用いテストを書いており、個別のテスト
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/universato/rurema_fresh. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/universato/rurema_fresh/blob/master/CODE_OF_CONDUCT.md).
-
 改善に繋がるかもしれないと思えば、自由にPull RequestやIssueを送ってください。
-
-## License
-
-The gem is available as open source under the terms of the MIT.
-
-ライセンスと良識の範囲で、自由に使ってください。
-
-## Code of Conduct
-
-Everyone interacting in the RuremaFresh project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/universato/rurema_fresh/blob/master/CODE_OF_CONDUCT.md).
