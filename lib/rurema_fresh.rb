@@ -145,8 +145,8 @@ module RuremaFresh
           version
         end
       else
-        puts "#{__FILE__}: #{__LINE__}行目でエラーが生じました。"
-        puts "rurema_fresh: 不正なバージョン入力です。終了します。"
+        puts "RuremaFresh: #{__FILE__}:#{__LINE__}行目でエラーが生じました。"
+        puts "#{version}: 不正なバージョン入力です。終了します。"
         exit
       end
     end

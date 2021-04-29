@@ -336,7 +336,7 @@ class RuremaFreshTest < Minitest::Test
   def test_remove_fresh_until_in_old_until
     src = <<-'TEXT'
 外だから残る
-#@since 3.0.0
+#@since 3.0
 #@until 1.8.7
 残らない
 #@else
@@ -348,7 +348,7 @@ class RuremaFreshTest < Minitest::Test
 
     dst = <<-'TEXT'
 外だから残る
-#@since 3.0.0
+#@since 3.0
 残る
 #@end
 外だから残る
@@ -544,7 +544,7 @@ class RuremaFreshTest < Minitest::Test
   def test_fresh_double_if
     src = <<-'TEXT'
 残る
-#@if ( "3.0.0" < version and version < "3.1.0"  )
+#@if ( "3.0" < version and version < "3.1.0"  )
 残る
 #@else
 残る
@@ -554,7 +554,7 @@ class RuremaFreshTest < Minitest::Test
 
     dst = <<-'TEXT'
 残る
-#@if ( "3.0.0" < version and version < "3.1.0"  )
+#@if ( "3.0" < version and version < "3.1.0"  )
 残る
 #@else
 残る
@@ -665,6 +665,9 @@ class RuremaFreshTest < Minitest::Test
     src = <<-'TEXT'
 #@if(version<'2.7.0')
 #@#消えるコメント
+#@end
+#@until 2.7
+消される
 #@end
 #@if('1.8.7'<= version and version < '2.1')
 条件とともに全て消える。
