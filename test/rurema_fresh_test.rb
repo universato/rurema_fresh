@@ -724,4 +724,17 @@ class RuremaFreshTest < Minitest::Test
     assert_equal '', RuremaFresh.remove_old_versions(src, '3')
     assert_equal '', RuremaFresh.remove_old_versions(src, 3)
   end
+
+  def test_method_replace_if_make_space
+    src = <<-'TEXT'
+#@if( '3.1.0'<= version and version < '3.3.0')
+#@end
+    TEXT
+
+    dst = <<-'TEXT'
+#@if ( '3.1.0'<= version and version < '3.3.0')
+#@end
+    TEXT
+    assert_equal dst, RuremaFresh.replace_if(src, '2.5.0')
+  end
 end
