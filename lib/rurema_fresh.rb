@@ -13,7 +13,56 @@ module RuremaFresh
     blocks = []
     delete_mode = false
 
-    file_text = file_text.gsub(/^(\#@if\s*\(\s*version\s*([<>!=]=?)\s*["'](.+)["']\s*\))/){
+    file_text = self.replace_if(file_text, support_version)
+
+    texts = file_text.lines
+    texts.each_with_index do |text, line_no|
+      if text.start_with?('#@since ', '#@until ')
+        blocks << text.dup
+        version = text.split[1]
+        if version <= support_version
+          delete_mode = true if text.start_with?('#@until ')
+          text.clear
+        end
+      elsif text.start_with?('#@else')
+        next if blocks[-1].start_with?('#@if')
+        directive, version = blocks.pop.split
+        if version <= support_version
+          text.clear
+          delete_mode = (directive == '#@since')
+        end
+        directive_swap(directive)
+        blocks << [directive, version].join(' ')
+      elsif text.start_with?('#@end')
+        directive, version = blocks.pop.split
+        if (directive == '#@since' || directive == '#@until') && version <= support_version
+          text.clear
+          delete_mode = false
+        elsif (directive == '#@samplecode' || directive == '#@if') && delete_mode
+          text.clear
+        end
+
+        if (directive, version = blocks.last&.split)
+          if directive == '#@until' && version <= support_version
+            delete_mode = true
+          end
+        end
+      elsif text.start_with?('#@samplecode', '#@if')
+        blocks << text.dup
+        text.clear if delete_mode
+      else
+        text.clear if delete_mode
+      end
+    end
+
+    texts.join
+  end
+  class << self
+    alias versions remove_old_versions
+  end
+
+  def self.replace_if(text, support_version)
+    text.gsub(/^(\#@if\s*\(\s*version\s*([<>!=]=?)\s*["'](.+)["']\s*\))/){
       zentai = $1
       op = $2
       version = $3
@@ -64,51 +113,6 @@ module RuremaFresh
         zentai.sub('#@if(', '#@if (')
       end
     }
-
-    texts = file_text.lines
-    texts.each_with_index do |text, line_no|
-      if text.start_with?('#@since ', '#@until ')
-        blocks << text.dup
-        version = text.split[1]
-        if version <= support_version
-          delete_mode = true if text.start_with?('#@until ')
-          text.clear
-        end
-      elsif text.start_with?('#@else')
-        next if blocks[-1].start_with?('#@if')
-        directive, version = blocks.pop.split
-        if version <= support_version
-          text.clear
-          delete_mode = (directive == '#@since')
-        end
-        directive_swap(directive)
-        blocks << [directive, version].join(' ')
-      elsif text.start_with?('#@end')
-        directive, version = blocks.pop.split
-        if (directive == '#@since' || directive == '#@until') && version <= support_version
-          text.clear
-          delete_mode = false
-        elsif (directive == '#@samplecode' || directive == '#@if') && delete_mode
-          text.clear
-        end
-
-        if (directive, version = blocks.last&.split)
-          if directive == '#@until' && version <= support_version
-            delete_mode = true
-          end
-        end
-      elsif text.start_with?('#@samplecode', '#@if')
-        blocks << text.dup
-        text.clear if delete_mode
-      else
-        text.clear if delete_mode
-      end
-    end
-
-    texts.join
-  end
-  class << self
-    alias versions remove_old_versions
   end
 
   private
