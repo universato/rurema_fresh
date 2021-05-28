@@ -91,9 +91,9 @@ module RuremaFresh
           zentai.sub('#@if(', '#@if (')
         end
       else
-        puts "RuremaFresh #{__FILE__}: #{__LINE__}行目:"
-        puts "本来、ここは実行されないはずです。異常終了します。"
-        exit
+        msg = "#{__FILE__}: #{__LINE__}行目:"
+        msg += "本来、ここは実行されないはずです。異常終了します。"
+        raise RuremaFresh::Error.new(msg)
       end
     }.gsub(/^(\#@if\s*\(\s*["'](.+)["']\s*(<=?)\s*version\s+and\s+version\s*(<=?)\s*["'](.+)["']\s*\))/){
 
@@ -149,9 +149,9 @@ module RuremaFresh
           version
         end
       else
-        puts "RuremaFresh: #{__FILE__}:#{__LINE__}行目でエラーが生じました。"
-        puts "#{version}: 不正なバージョン入力です。終了します。"
-        exit
+        msg = "RuremaFresh: #{__FILE__}:#{__LINE__}行目でエラーが生じました。"
+        msg += "#{version}: 不正なバージョン入力です。終了します。"
+        raise RuremaFresh::Error.new(msg)
       end
     end
 

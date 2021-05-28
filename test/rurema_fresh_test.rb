@@ -14,7 +14,7 @@ class RuremaFreshTest < Minitest::Test
   CSV.foreach(csv_path, headers: true).with_index(1) do |row, i|
     if row['support_version'].nil?
       puts "#{i}行目のテストケースにサポートしたいバージョンがありません。テストを終了します。"
-      exit
+      next
     end
 
     str = "def test_remove#{i}
@@ -736,5 +736,35 @@ class RuremaFreshTest < Minitest::Test
 #@end
     TEXT
     assert_equal dst, RuremaFresh.replace_if(src, '2.5.0')
+  end
+
+  def test_old_if_to_until
+    src = <<-'TEXT'
+#@if( '1.9.0'<= version and version <= '3.3.0')
+#@end
+    TEXT
+
+    dst = <<-'TEXT'
+#@until 3.4.0
+#@end
+    TEXT
+    assert_equal dst, RuremaFresh.replace_if(src, '2.5.0')
+  end
+
+  def test_if_error
+    src = <<-'TEXT'
+#@if( version = '1.9.0')
+#@end
+    TEXT
+
+    assert_raises(RuremaFresh::Error){
+      RuremaFresh.replace_if(src, '2.5.0')
+    }
+  end
+
+  def test_add_minor_error
+    assert_raises(RuremaFresh::Error){
+      RuremaFresh.add_minor("a")
+     }
   end
 end
