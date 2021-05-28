@@ -767,4 +767,19 @@ class RuremaFreshTest < Minitest::Test
       RuremaFresh.add_minor("a")
      }
   end
+
+  def test_command
+    require 'fileutils'
+    FileUtils.mkdir('./tmp') unless File.exist?("./tmp")
+    FileUtils.cp './test/sample.rd', './tmp/'
+    `./exe/rurema_fresh versions ./tmp/sample.rd`
+    dst = <<-'TEXT'
+#@samplecode
+puts "Hello, World!"
+#@end
+    TEXT
+    File.open("./tmp/sample.rd") do |file|
+      assert_equal dst, file.readlines.join
+    end
+  end
 end
